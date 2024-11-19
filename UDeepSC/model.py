@@ -15,6 +15,7 @@ from timm.models.layers import trunc_normal_ as __call_trunc_normal_
 from typing import List, Callable, Union, Any, TypeVar, Tuple
 from transformers import BertForSequenceClassification, BertModel
 from model_util import Block, _cfg, PatchEmbed, get_sinusoid_encoding_table
+from transformers import AutoTokenizer, AutoModelForMaskedLM
 from base_args import IMGC_NUMCLASS,TEXTC_NUMCLASS,IMGR_LENGTH,TEXTR_NUMCLASS,VQA_NUMCLASS,MSA_NUMCLASS
 
 
@@ -42,8 +43,9 @@ class UDeepSC_M1(nn.Module):
                                 drop_path_rate=drop_path_rate,norm_layer=norm_layer, init_values=init_values,
                                 use_learnable_pos_emb=use_learnable_pos_emb)
         
-        bert_ckpt = f"/Data1/zhangguangyi/SemanRes2/JSACCode/UDeepSC_Base/pretrained_models/bert-{mode}"
+        bert_ckpt = f"D:/工作日记/2024.10.21语义通信系统参数量/bert-{mode}"
         self.text_encoder = BertModel.from_pretrained(bert_ckpt)
+
         
         self.spe_encoder = SPTEncoder(in_chans=encoder_in_chans,num_classes=encoder_num_classes, embed_dim=speech_embed_dim,
                                 depth=speech_encoder_depth,num_heads=encoder_num_heads, mlp_ratio=mlp_ratio, qkv_bias=qkv_bias,drop_rate=drop_rate, 
@@ -426,3 +428,13 @@ def UDeepSC_new_model(pretrained=False, **kwargs):
         )
         model.load_state_dict(checkpoint["model"])
     return model
+
+
+# def count_parameters(model):
+#     return sum(p.numel() for p in model.parameters() if p.requires_grad)
+
+# model = UDeepSC_model(pretrained=False, **kwargs)
+
+
+# num_params = count_parameters(model)
+# print(f"The model has {num_params} trainable parameters.")
